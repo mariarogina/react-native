@@ -9,7 +9,7 @@ var tableName = 'new';
 export const init = () => {
   const promise = new Promise((resolve, reject) => {
     db.transaction(tx => {
-      // tx.executeSql('DROP TABLE IF EXISTS new', []);
+      tx.executeSql('DROP TABLE IF EXISTS new', []);
       //uncomment this if needed - sometimes it is good to empty the table
       //By default, primary key is auto_incremented
       //we do not add anything to that column
