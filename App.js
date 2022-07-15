@@ -8,7 +8,13 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native';
-import {init, addBoot, updateBoot, deleteBoot, fetchAllBoots} from './db/db';
+import {
+  init,
+  addProduct,
+  updateProduct,
+  deleteProduct,
+  fetchAllProducts,
+} from './db/db';
 import ItemBox from './components/ItemBox';
 
 init()
@@ -20,115 +26,125 @@ init()
   });
 
 const App = () => {
-  const [bootList, setBootList] = useState([]);
+  const [productList, setProductList] = useState([]);
   const [saveupdate, setSaveUpdate] = useState('Save');
   const [updateIndex, setUpdateIndex] = useState(-1);
   const [type, setType] = useState('');
-  const [size, setSize] = useState('');
+  const [pcs, setPcs] = useState('');
 
   const handleType = text => {
     setType(text);
   };
-  const handleSize = text => {
-    setSize(text);
+  const handlePcs = text => {
+    setPcs(text);
   };
 
-  async function saveBoot() {
+  async function saveProduct() {
     if (updateIndex >= 0) {
-      updateBootInDb();
+      updateProductInDb();
     } else {
       try {
-        const dbResult = await addBoot(type, size);
+        const dbResult = await addProduct(type, pcs);
         console.log('dbResult: ' + dbResult); //For debugging purposes to see the data in the console screen
-        await readAllBoots();
+        await readAllProducts();
       } catch (err) {
         console.log(err);
       } finally {
         setType('');
-        setSize('');
+        setPcs('');
       }
     }
   }
 
-  const saveBootNotEmpty = (type, size) => {
-    if (type !== '' && size !== '') {
-      saveBoot();
+  const saveProductNotEmpty = (type, pcs) => {
+    if (type !== '' && pcs !== '') {
+      saveProduct();
     } else {
-      alert('Please enter type and size');
+      alert('Please enter type and pcs');
     }
   };
-  const handleBootUpdate = index => {
+  const handleProductUpdate = index => {
     setUpdateIndex(index);
-    setType(bootList[index].type);
-    setSize('' + bootList[index].size); //Must be changed to string, because used in value property of TextInput
+    setType(productList[index].type);
+    setPcs('' + productList[index].pcs); //Must be changed to string, because used in value property of TextInput
     setSaveUpdate('Update');
   };
-  async function deleteBootFromDb(id) {
+  async function deleteProductFromDb(id) {
     try {
-      const dbResult = await deleteBoot(id);
-      await readAllBoots();
+      const dbResult = await deleteProduct(id);
+      await readAllProducts();
     } catch (err) {
       console.log(err);
     } finally {
       //No need to do anything
     }
   }
-  async function updateBootInDb() {
+  async function updateProductInDb() {
     try {
-      const dbResult = await updateBoot(bootList[updateIndex].id, type, size);
-      await readAllBoots();
+      const dbResult = await updateProduct(
+        productList[updateIndex].id,
+        type,
+        pcs,
+      );
+      await readAllProducts();
     } catch (err) {
       console.log(err);
     } finally {
       setUpdateIndex(-1);
       setSaveUpdate('Save');
       setType('');
-      setSize('');
+      setPcs('');
     }
   }
-  async function readAllBoots() {
+  async function readAllProducts() {
     try {
-      const dbResult = await fetchAllBoots();
+      const dbResult = await fetchAllProducts();
       console.log('dbResult readAllFish in App.js');
       console.log(dbResult);
-      setBootList(dbResult);
+      setProductList(dbResult);
     } catch (err) {
       console.log('Error: ' + err);
     } finally {
-      console.log('All Boots are read!');
+      console.log('All Products are read!');
     }
   }
   return (
     <View style={styles.container}>
       <TextInput
         value={type}
+        placeholder={'type'}
         onChangeText={handleType}
         style={styles.inputstyle}
       />
       <TextInput
-        value={size}
-        onChangeText={handleSize}
+        value={pcs}
+        placeholder={'pcs'}
+        onChangeText={handlePcs}
         style={styles.inputstyle}
       />
       <View style={styles.button}>
         <Button
           title={saveupdate}
           color={saveupdate === 'Update' ? '#3498DB' : 'green'}
-          onPress={() => saveBootNotEmpty(type, size)}
+          onPress={() => saveProductNotEmpty(type, pcs)}
         />
         <View style={styles.seperatorLine}></View>
-        <Button title="Read" color="#F39C12" onPress={() => readAllBoots()} />
+        <Button
+          title="Read"
+          color="#F39C12"
+          onPress={() => readAllProducts()}
+        />
       </View>
-      <Text style={styles.title}>The Boots</Text>
+      <Text style={styles.title}>The Products</Text>
       <FlatList
-        data={bootList}
+        data={productList}
         renderItem={({item, index}) => {
           return (
             <View style={styles.itembox}>
               <ItemBox
                 item={item}
-                handleBootUpdate={() => handleBootUpdate(index)}
-                deleteBootFromDb={() => deleteBootFromDb(item.id)}
+                handleProductUpdate={() => handleProductUpdate(index)}
+                deleteProductFromDb={() => deleteProductFromDb(item.id)}
               />
             </View>
           );

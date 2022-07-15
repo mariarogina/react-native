@@ -16,7 +16,7 @@ export const init = () => {
       tx.executeSql(
         'create table if not exists ' +
           tableName +
-          '(id integer not null primary key, type text not null, size integer not null);',
+          '(id integer not null primary key, type text not null, pcs integer not null);',
         [],
         //second parameters of execution:empty square brackets
         // this parameter is not needed when creating table
@@ -35,15 +35,15 @@ export const init = () => {
   return promise;
 };
 
-export const addBoot = (type, size) => {
+export const addProduct = (type, pcs) => {
   const promise = new Promise((resolve, reject) => {
     db.transaction(tx => {
       //Here we use the Prepared statement,
       //just putting placeholders to the values to be inserted
       tx.executeSql(
-        'insert into ' + tableName + '(type, size) values(?,?);',
+        'insert into ' + tableName + '(type, pcs) values(?,?);',
         //And the values come here
-        [type, size],
+        [type, pcs],
         //If the transaction succeeds, this is called
         () => {
           resolve();
@@ -57,15 +57,15 @@ export const addBoot = (type, size) => {
   });
   return promise;
 };
-export const updateBoot = (id, type, size) => {
+export const updateProduct = (id, type, pcs) => {
   const promise = new Promise((resolve, reject) => {
     db.transaction(tx => {
       //Here we use the Prepared statement,
       //just putting placeholders to the values to be inserted
       tx.executeSql(
-        'update ' + tableName + ' set type=?, size=? where id=?;',
+        'update ' + tableName + ' set type=?, pcs=? where id=?;',
         //And the values come here
-        [type, size, id],
+        [type, pcs, id],
         //If the transaction succeeds, this is called
         () => {
           resolve();
@@ -79,7 +79,7 @@ export const updateBoot = (id, type, size) => {
   });
   return promise;
 };
-export const deleteBoot = id => {
+export const deleteProduct = id => {
   const promise = new Promise((resolve, reject) => {
     db.transaction(tx => {
       //Here we use the Prepared statement,
@@ -102,7 +102,7 @@ export const deleteBoot = id => {
   return promise;
 };
 
-export const fetchAllBoots = () => {
+export const fetchAllProducts = () => {
   const promise = new Promise((resolve, reject) => {
     db.transaction(tx => {
       //Here we select all from the table fish
@@ -116,7 +116,7 @@ export const fetchAllBoots = () => {
 
           for (let i = 0; i < result.rows.length; i++) {
             items.push(result.rows.item(i));
-            //The form of an item is {"type": "Leather Boot", "id": 1, "size": 47}
+            //The form of an item is {"type": "Leather Product", "id": 1, "pcs": 47}
             console.log(result.rows.item(i));
             //For debugging purposes to see the data in console window
           }
