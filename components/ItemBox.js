@@ -11,7 +11,9 @@ import {Swipeable, GestureHandlerRootView} from 'react-native-gesture-handler';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
+//component for a shopping list item
 const ItemBox = ({item, handleProductUpdate, deleteProductFromDb}) => {
+  //here swipe behavior is defined
   const rightSwipe = (progress, dragX) => {
     const scale = dragX.interpolate({
       inputRange: [-100, 0],
@@ -19,7 +21,7 @@ const ItemBox = ({item, handleProductUpdate, deleteProductFromDb}) => {
       extrapolate: 'clamp',
     });
     return (
-      //this goes only with replace DELETE and UPDATE Handler
+      //touchable area for swipe confirmation button
       <TouchableOpacity onPress={deleteProductFromDb}>
         <View style={styles.deleteBox}>
           <Animated.Text style={{transform: [{scale: scale}]}}>
@@ -30,13 +32,13 @@ const ItemBox = ({item, handleProductUpdate, deleteProductFromDb}) => {
     );
   };
   return (
-    //here goew VIEW from former renderItem (renderProduct) in flatList
     <GestureHandlerRootView>
+      {/* touchable area for short press (update) and swipe (delete)*/}
       <TouchableOpacity onPress={handleProductUpdate}>
         <Swipeable renderRightActions={rightSwipe}>
           <View style={styles.container}>
             <Text style={styles.listitemstyle}>
-              {item.id} {item.type} {item.pcs}
+              {item.id}. {item.type}, {item.pcs} pcs
             </Text>
           </View>
         </Swipeable>

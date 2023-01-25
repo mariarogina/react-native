@@ -6,7 +6,6 @@ import {
   Button,
   FlatList,
   TextInput,
-  TouchableOpacity,
 } from 'react-native';
 import {
   init,
@@ -17,6 +16,7 @@ import {
 } from './db/db';
 import ItemBox from './components/ItemBox';
 
+//initialize the database
 init()
   .then(() => {
     console.log('Database creation succeeded!');
@@ -32,6 +32,7 @@ const App = () => {
   const [type, setType] = useState('');
   const [pcs, setPcs] = useState('');
 
+  //setting input results to state
   const handleType = text => {
     setType(text);
   };
@@ -39,13 +40,15 @@ const App = () => {
     setPcs(text);
   };
 
+  //save product to database
   async function saveProduct() {
     if (updateIndex >= 0) {
       updateProductInDb();
     } else {
       try {
         const dbResult = await addProduct(type, pcs);
-        console.log('dbResult: ' + dbResult); //For debugging purposes to see the data in the console screen
+        console.log('dbResult: ' + dbResult);
+        //For debugging purposes to see the data in the console screen
         await readAllProducts();
       } catch (err) {
         console.log(err);
@@ -56,6 +59,7 @@ const App = () => {
     }
   }
 
+  //check if input fields are not empty
   const saveProductNotEmpty = (type, pcs) => {
     if (type !== '' && pcs !== '') {
       saveProduct();
@@ -63,12 +67,16 @@ const App = () => {
       alert('Please enter type and pcs');
     }
   };
+
+  //setting product to update
   const handleProductUpdate = index => {
     setUpdateIndex(index);
     setType(productList[index].type);
-    setPcs('' + productList[index].pcs); //Must be changed to string, because used in value property of TextInput
+    setPcs('' + productList[index].pcs);
     setSaveUpdate('Update');
   };
+
+  //deleting product from the database
   async function deleteProductFromDb(id) {
     try {
       const dbResult = await deleteProduct(id);
@@ -79,6 +87,8 @@ const App = () => {
       //No need to do anything
     }
   }
+
+  //updating product in db
   async function updateProductInDb() {
     try {
       const dbResult = await updateProduct(
@@ -96,10 +106,12 @@ const App = () => {
       setPcs('');
     }
   }
+
+  //reading the list from the database
   async function readAllProducts() {
     try {
       const dbResult = await fetchAllProducts();
-      console.log('dbResult readAllFish in App.js');
+      console.log('dbResult readAllProducts in App.js');
       console.log(dbResult);
       setProductList(dbResult);
     } catch (err) {
@@ -135,7 +147,7 @@ const App = () => {
           onPress={() => readAllProducts()}
         />
       </View>
-      <Text style={styles.title}>The Products</Text>
+      <Text style={styles.title}>Shopping list</Text>
       <FlatList
         data={productList}
         renderItem={({item, index}) => {

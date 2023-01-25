@@ -1,18 +1,14 @@
-import React from 'react';
-
 import {openDatabase} from 'react-native-sqlite-storage';
 
-var db = openDatabase({name: 'new.db'});
-var tableName = 'new';
-//method returns a Promise -
-//on the calling side .then(...).then(...)....catch(...) can be used
+var db = openDatabase({name: 'shopping.db'});
+var tableName = 'shopping';
+//method returns a Promise
 export const init = () => {
   const promise = new Promise((resolve, reject) => {
     db.transaction(tx => {
-      tx.executeSql('DROP TABLE IF EXISTS new', []);
-      //uncomment this if needed - sometimes it is good to empty the table
+      // tx.executeSql('DROP TABLE IF EXISTS shopping', []);
+      //sometimes it is good to empty the table
       //By default, primary key is auto_incremented
-      //we do not add anything to that column
       tx.executeSql(
         'create table if not exists ' +
           tableName +
@@ -20,7 +16,6 @@ export const init = () => {
         [],
         //second parameters of execution:empty square brackets
         // this parameter is not needed when creating table
-        //If the transaction succeeds, this is called
         () => {
           resolve();
           //There is no need to return anything
@@ -60,7 +55,7 @@ export const addProduct = (type, pcs) => {
 export const updateProduct = (id, type, pcs) => {
   const promise = new Promise((resolve, reject) => {
     db.transaction(tx => {
-      //Here we use the Prepared statement,
+      //Here we use the prepared statement,
       //just putting placeholders to the values to be inserted
       tx.executeSql(
         'update ' + tableName + ' set type=?, pcs=? where id=?;',
@@ -82,7 +77,7 @@ export const updateProduct = (id, type, pcs) => {
 export const deleteProduct = id => {
   const promise = new Promise((resolve, reject) => {
     db.transaction(tx => {
-      //Here we use the Prepared statement,
+      //Here we use the prepared statement,
       //just putting placeholders to the values to be inserted
       tx.executeSql(
         'delete from ' + tableName + ' where id=?;',
